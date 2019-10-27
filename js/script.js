@@ -70,8 +70,8 @@ If one is selected, another with an overlapping time is not selectable and the u
 //When activity is unchecked, any competing activities become available again
 
 const $activities = $('.activities');
-let totalCost = '';
-$activities.append(totalCost);
+let totalCost = 0;
+
 
 const $checkboxes = $('.activities input');
 const disabledMessage = ('<b>Overlapping time</b>');
@@ -80,19 +80,23 @@ $('.activities').change(function (e) {
     const $checked = e.target;
     const $checkedTime = $($checked).attr('data-day-and-time');
     const $checkedCost = $($checked).attr('data-cost');
-    console.log(parseInt($checkedCost, 10));
+    console.log(parseInt($checkedCost.slice(1)));
     $checkboxes.each(function(i, element){
         const $checkboxTime = $(element).attr('data-day-and-time');
         if ($checkboxTime === $checkedTime && element !== $checked) {
             if ($($checked).prop('checked')) {
                 $(element).prop('disabled', true);
                 $(element).parent().append(disabledMessage);
-                totalCost += $checkedCost;
+                $('.activities p').remove();
+                totalCost += parseInt($checkedCost.slice(1));
+                const displayTotalCost = $(`<p><b>Total Cost: </b>$${totalCost}</p>`);
+                $activities.append(displayTotalCost);
             } else {
+                $('.activities p').remove();
+                totalCost -= parseInt($checkedCost.slice(1));
                 $(element).prop('disabled', false);
                 $(element).next().remove();
-            }
-           
+            }  
         }
     });
 });
