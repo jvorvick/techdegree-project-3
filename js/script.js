@@ -95,6 +95,11 @@ $('.activities').change(function (e) {
             }  
         }
     });
+/*
+Below the checkboxes, the total cost of all selected activities is displayed when a checkbox is selected.
+The total cost is updated each time a checkbox is selected or deselected.
+*/
+
     if ($($checked).prop('checked')) {
         $('.activities p').remove();
         totalCost += parseInt($checkedCost.slice(1));
@@ -110,9 +115,47 @@ $('.activities').change(function (e) {
     }
 });
 
+//"Payment Info"
 
+//The payment option selected displays the corresponding payment section.
 
-/*
-Below the checkboxes, the total cost of all selected activities is displayed when a checkbox is selected.
-The total cost is updated each time a checkbox is selected or deselected.
+/* 
+The "Credit Card" payment option is displayed by default. 
+The "select method" option is disabled; user must select a payment option to submit the form.
+Credit card section div is displayed.
+"Paypal" and "Bitcoin" payment sections are hidden.
 */
+
+//"Payment Info" variables
+const $paymentMenu = $('#payment option');
+const $creditCardInfo = $('#credit-card');
+const $payPalInfo = $('#paypal');
+const $bitCoinInfo = $('#bitcoin');
+
+$($paymentMenu).eq(1).attr('selected', true);
+$($paymentMenu).eq(0).attr('disabled', true); 
+
+$($payPalInfo).hide();
+$($bitCoinInfo).hide();
+
+//When "PayPal" payment option is selected, "PayPal" section is displayed, while "Credit Card" and "Bitcoin" sections are hidden.
+
+//When "Bitcoin" payment option is selected, "Bitcoin" section is displayed, while "Credit Card" and "PayPal" sections are hidden.
+
+$('#payment').change(function () {
+    $($paymentMenu).eq(1).removeAttr('selected');
+    if ($(this).val() === 'PayPal') {
+        $($creditCardInfo).hide();
+        $($bitCoinInfo).hide();
+        $($payPalInfo).show();
+    } else if ($(this).val() === 'Bitcoin') {
+        $($creditCardInfo).hide();
+        $($payPalInfo).hide();
+        $($bitCoinInfo).show();
+    } else {
+        $($payPalInfo).hide();
+        $($bitCoinInfo).hide();
+        $($creditCardInfo).show();
+    }
+});
+
