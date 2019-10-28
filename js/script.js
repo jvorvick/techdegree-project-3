@@ -1,4 +1,6 @@
 //variables
+const $otherField = $('#other-title');
+
 const $colorMenuPlaceholder = $('<option value="placeholder">Please select a T-shirt theme</option>');
 
 const $colorMenu = $('#color');
@@ -7,13 +9,23 @@ const $colorMenuOptions = $('#color option');
 const $designMenuOptions = $('#design option');
 
 
-//"T-Shirt Info"
-
 //Focus set to 'name' input field when page loads
 $('#name').focus();
 
 //'Other' field is hidden until user selects 'other' in 'Job Role' field
-$('#other-title').hide();
+//When 'other' is selected, a text input field is displayed.
+//When another option is selected, the field's text is reset and the field is again hidden.
+
+$($otherField).hide();
+$('#title').change(function () {
+    if ($(this).val() === 'other') {
+        $($otherField).show();
+    } else {
+        $($otherField).val('').hide();        
+    }    
+});
+
+//"T-Shirt Info"
 
 //No color options appear in 'color' drop down and the field until a T-shirt theme is selected.
 $($colorMenuOptions).attr('hidden', true);
@@ -71,12 +83,10 @@ If one is selected, another with an overlapping time is not selectable and the u
 
 const $activities = $('.activities');
 let totalCost = 0;
-
-
 const $checkboxes = $('.activities input');
 const disabledMessage = ('<b>Overlapping time</b>');
 
-$('.activities').change(function (e) {
+$($activities).change(function (e) {
     const $checked = e.target;
     const $checkedTime = $($checked).attr('data-day-and-time');
     const $checkedCost = $($checked).attr('data-cost');
