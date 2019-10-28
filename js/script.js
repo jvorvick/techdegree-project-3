@@ -87,18 +87,27 @@ $('.activities').change(function (e) {
             if ($($checked).prop('checked')) {
                 $(element).prop('disabled', true);
                 $(element).parent().append(disabledMessage);
-                $('.activities p').remove();
-                totalCost += parseInt($checkedCost.slice(1));
-                const displayTotalCost = $(`<p><b>Total Cost: </b>$${totalCost}</p>`);
-                $activities.append(displayTotalCost);
+                
             } else {
-                $('.activities p').remove();
-                totalCost -= parseInt($checkedCost.slice(1));
+                
                 $(element).prop('disabled', false);
                 $(element).next().remove();
             }  
         }
     });
+    if ($($checked).prop('checked')) {
+        $('.activities p').remove();
+        totalCost += parseInt($checkedCost.slice(1));
+        const displayTotalCost = $(`<p><b>Total Cost: </b>$${totalCost}</p>`);
+        $activities.append(displayTotalCost);
+    } else {
+        $('.activities p').remove();
+        totalCost -= parseInt($checkedCost.slice(1));
+        const displayTotalCost = $(`<p><b>Total Cost: </b>$${totalCost}</p>`);
+        if (totalCost > 0) {     
+            $activities.append(displayTotalCost);
+        }  
+    }
 });
 
 
