@@ -169,3 +169,66 @@ $('#payment').change(function () {
     }
 });
 
+// The following code checks for errors and prevents submision of the form.
+
+//Form validation variables
+const $registerButton = $('button');
+    //Name field must have text.
+
+function nameTest (name) {
+    return /\w/.test(name);
+}
+
+function emailTest (email) {
+    return /^[\w]+\@[\w]+\.[\w]+$/i.test(email);    
+}
+
+function checkboxTest () {
+    let result = false;
+    $($checkboxes).each(function (i, element){
+        if ($(element).prop('checked')) {
+            result = true;
+        }    
+    });
+    return result;
+}
+
+function creditCardTest () {
+    let result = false;
+    if ($($paymentMenu).eq(1).prop('selected')){
+        const ccNumTest = /^\d{13,16}$/.test($('#cc-num').val());
+        const ccZipTest = /^\d{5}$/.test($('#zip').val());
+        const ccCvvTest = /^\d{3}$/.test($('#cvv').val());
+        if (ccNumTest && ccZipTest && ccCvvTest) {
+            result = true;
+        }
+    } else {
+        result = true;
+    }
+    return result;
+}
+
+const checkboxResult = checkboxTest();
+
+$('form').submit(function(e) {
+    const nameResult = nameTest ($('#name').val());
+    const emailResult = emailTest($('#mail').val());
+    const checkboxResult = checkboxTest();
+    const creditCardResult = creditCardTest();
+    if (!nameResult || !emailResult || !checkboxResult ||!creditCardResult){
+        e.preventDefault();
+    } 
+});
+
+    //Email field must have text in a valid email format.
+
+    //In "Register for Activities", at least one checkbox must be selected.
+
+    //In "Payment Options", if "Credit Card" is selected, a credit card number, zip code, and CVV must be supplied.
+    
+        //Credit card field must be between 13 and 16 characters, numbers only.
+
+        //Zip code field must be a 5-digit number.
+
+        //CVV must be a 3-digit number.
+
