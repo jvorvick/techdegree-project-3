@@ -1,21 +1,32 @@
-//variables
+//"Basic Info" variables
 const $otherField = $('#other-title');
 
+//"T-shirt Info" section variables
 const $colorMenuPlaceholder = $('<option value="placeholder">Please select a T-shirt theme</option>');
-
 const $colorMenu = $('#color');
 const $designMenu = $('#design');
 const $colorMenuOptions = $('#color option');
-const $designMenuOptions = $('#design option');
 
+//"Register for Activities" section variables
+const $activities = $('.activities');
+let totalCost = 0;
+const $checkboxes = $('.activities input');
+const disabledMessage = ('<b>Overlapping time</b>');
 
-//Focus set to 'name' input field when page loads
+//"Payment Info" variables
+const $paymentMenu = $('#payment option');
+const $creditCardInfo = $('#credit-card');
+const $payPalInfo = $('#paypal');
+const $bitCoinInfo = $('#bitcoin');
+
+//"Basic Info" Section
+
+//Focus set to 'name' input field when page loads.
 $('#name').focus();
 
 //'Other' field is hidden until user selects 'other' in 'Job Role' field
 //When 'other' is selected, a text input field is displayed.
 //When another option is selected, the field's text is reset and the field is again hidden.
-
 $($otherField).hide();
 $('#title').change(function () {
     if ($(this).val() === 'other') {
@@ -25,7 +36,7 @@ $('#title').change(function () {
     }    
 });
 
-//"T-Shirt Info"
+//"T-Shirt Info" Section
 
 //No color options appear in 'color' drop down and the field until a T-shirt theme is selected.
 $($colorMenuOptions).attr('hidden', true);
@@ -35,13 +46,9 @@ $($colorMenuPlaceholder).attr('selected', true);
 //Only options matching the theme selected via the 'design' menu will be displayed in the 'color' menu.
 //Both menus are updated when a different theme is selected from the 'design' menu.
 $($designMenu).change(function (event) {
-   
     $($colorMenuPlaceholder).attr('hidden', true);
-    
     if ($(this).val() === 'js puns') {
-        
         $($colorMenuOptions).each(function (i, element) {
-
             if (i <= 2) {
                 $(element).removeAttr('hidden');
                 $($colorMenuOptions).eq(3).attr('selected', false);
@@ -51,17 +58,14 @@ $($designMenu).change(function (event) {
             }
         });
     } else if ($(this).val() === 'heart js') {
-        
         $($colorMenuOptions).each(function (i, element) {
             if (i >= 3) {
                 $(element).removeAttr('hidden');
                 $($colorMenuOptions).eq(0).attr('selected', false);
-                $($colorMenuOptions).eq(3).attr('selected', true);
-                
+                $($colorMenuOptions).eq(3).attr('selected', true); 
             } else {
                 $(element).attr('hidden', true);
             }
-
         });
     } else {
         $($colorMenuPlaceholder).attr('hidden', false);
@@ -72,7 +76,7 @@ $($designMenu).change(function (event) {
   
 });
 
-//"Register for Activities"
+//"Register for Activities" Section
 
 /*
 Selection of two workshops of the same day and time cannot be selected.
@@ -80,12 +84,6 @@ If one is selected, another with an overlapping time is not selectable and the u
 */
 
 //When activity is unchecked, any competing activities become available again
-
-const $activities = $('.activities');
-let totalCost = 0;
-const $checkboxes = $('.activities input');
-const disabledMessage = ('<b>Overlapping time</b>');
-
 $($activities).change(function (e) {
     const $checked = e.target;
     const $checkedTime = $($checked).attr('data-day-and-time');
@@ -96,20 +94,18 @@ $($activities).change(function (e) {
         if ($checkboxTime === $checkedTime && element !== $checked) {
             if ($($checked).prop('checked')) {
                 $(element).prop('disabled', true);
-                $(element).parent().append(disabledMessage);
-                
+                $(element).parent().append(disabledMessage);  
             } else {
-                
                 $(element).prop('disabled', false);
                 $(element).next().remove();
             }  
         }
     });
+
 /*
 Below the checkboxes, the total cost of all selected activities is displayed when a checkbox is selected.
 The total cost is updated each time a checkbox is selected or deselected.
 */
-
     if ($($checked).prop('checked')) {
         $('.activities p').remove();
         totalCost += parseInt($checkedCost.slice(1));
@@ -125,7 +121,7 @@ The total cost is updated each time a checkbox is selected or deselected.
     }
 });
 
-//"Payment Info"
+//"Payment Info" Section
 
 //The payment option selected displays the corresponding payment section.
 
@@ -135,13 +131,6 @@ The "select method" option is disabled; user must select a payment option to sub
 Credit card section div is displayed.
 "Paypal" and "Bitcoin" payment sections are hidden.
 */
-
-//"Payment Info" variables
-const $paymentMenu = $('#payment option');
-const $creditCardInfo = $('#credit-card');
-const $payPalInfo = $('#paypal');
-const $bitCoinInfo = $('#bitcoin');
-
 $($paymentMenu).eq(1).attr('selected', true);
 $($paymentMenu).eq(0).attr('disabled', true); 
 
@@ -149,19 +138,18 @@ $($payPalInfo).hide();
 $($bitCoinInfo).hide();
 
 //When "PayPal" payment option is selected, "PayPal" section is displayed, while "Credit Card" and "Bitcoin" sections are hidden.
-
-//When "Bitcoin" payment option is selected, "Bitcoin" section is displayed, while "Credit Card" and "PayPal" sections are hidden.
-
 $('#payment').change(function () {
     $($paymentMenu).eq(1).removeAttr('selected');
     if ($(this).val() === 'PayPal') {
         $($creditCardInfo).hide();
         $($bitCoinInfo).hide();
         $($payPalInfo).show();
+    //When "Bitcoin" payment option is selected, "Bitcoin" section is displayed, while "Credit Card" and "PayPal" sections are hidden.
     } else if ($(this).val() === 'Bitcoin') {
         $($creditCardInfo).hide();
         $($payPalInfo).hide();
         $($bitCoinInfo).show();
+    //When "Credit Card" payment option is selected, "Credit Card" section is displayed, while "PayPal" and "Bitcoin" sections are hidden.    
     } else {
         $($payPalInfo).hide();
         $($bitCoinInfo).hide();
@@ -169,10 +157,7 @@ $('#payment').change(function () {
     }
 });
 
-
-
-//Form validation variables
-const $registerButton = $('button');
+//Form Validation
     
 //Name field must have text.
 function nameTest (name) {
@@ -195,49 +180,31 @@ function checkboxTest () {
 }
 
 //In "Payment Info", if "Credit Card" is selected, a credit card number, zip code, and CVV must be supplied.
-
-    //Credit card field must be between 13 and 16 characters, numbers only.
-
-    //Zip code field must be a 5-digit number.
-
-    //CVV must be a 3-digit number.
-
-//If form submission is denied, a red text message indicative of the error appears next to the corresponding field(s).
-
-    //Name
-
-    //email
-
-    //checkboxes (At least one activity must be selected)
-
-    //If "credit card" has been selected from the "Payment Options"
-
-        //Credit Card number
-
-        //Zip code
-
-        //CVV
-
 function creditCardTest () {
     let result = false;
-    
     if ($($paymentMenu).eq(1).prop('selected')){
+        //Credit card field must be between 13 and 16 characters, numbers only.
         const ccNumTest = /^\d{13,16}$/.test($('#cc-num').val());
+        //Zip code field must be a 5-digit number.
         const ccZipTest = /^\d{5}$/.test($('#zip').val());
+        //CVV must be a 3-digit number.
         const ccCvvTest = /^\d{3}$/.test($('#cvv').val());
         if (ccNumTest && ccZipTest && ccCvvTest) {
             result = true;
 
         } else {
+        //If form submission is denied, a red text message indicative of the error appears next to the corresponding field(s):
+            //Credit Card number 
             if (!ccNumTest) {
                 const $errorMessage = $('<b>Please enter credit card number</b>').css('color', 'red');
                 $errorMessage.insertBefore('#cc-num');
             } else {
-                
+            //Zip code 
             }
             if (!ccZipTest) {
                 const $errorMessage = $('<b>Please enter zip code</b>').css('color', 'red');
                 $errorMessage.insertBefore('#zip');
+            //CVV
             } if (!ccCvvTest) {
                 const $errorMessage = $('<b>Please enter CVV code (found on back of credit card)</b>').css('color', 'red');
                 $errorMessage.insertBefore('#cvv');
@@ -258,14 +225,18 @@ $('form').submit(function(e) {
     const creditCardResult = creditCardTest();
     if (!nameResult || !emailResult || !checkboxResult || !creditCardResult) {
         e.preventDefault();
+        //If form submission is denied, a red text message indicative of the error appears next to the corresponding field(s):
+        //Name
         if (!nameResult) {
             const $errorMessage =  $('<b>Input needed</b>').css('color', 'red');
             $errorMessage.insertBefore('#name');
         }
+        //email
         if(!emailResult) {
             const $errorMessage =  $('<b>Input needed</b>').css('color', 'red');
             $errorMessage.insertBefore('#mail');
         }
+        //checkboxes (At least one activity must be selected)
         if(!checkboxResult){
             const $errorMessage =  $(`<b>Please select at least one activity<br>&nbsp</b>`).css('color', 'red'); 
             $errorMessage.insertAfter('.activities legend');
