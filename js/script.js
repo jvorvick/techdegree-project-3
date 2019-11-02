@@ -1,8 +1,9 @@
-//"Basic Info" variables
+//"Basic Info" section variables
 const $otherField = $('#other-title');
 
 //"T-shirt Info" section variables
 const $colorMenuPlaceholder = $('<option value="placeholder">Please select a T-shirt theme</option>');
+const $color = $('#colors-js-puns');
 const $colorMenu = $('#color');
 const $designMenu = $('#design');
 const $colorMenuOptions = $('#color option');
@@ -13,7 +14,7 @@ let totalCost = 0;
 const $checkboxes = $('.activities input');
 const disabledMessage = ('<b>Overlapping time</b>');
 
-//"Payment Info" variables
+//"Payment Info" section variables
 const $paymentMenu = $('#payment option');
 const $creditCardInfo = $('#credit-card');
 const $payPalInfo = $('#paypal');
@@ -38,6 +39,9 @@ $('#title').change(function () {
 
 //"T-Shirt Info" Section
 
+//"Color" label and select menu remains hidden until a selection is made from "Design" menu.
+$color.hide();
+
 //No color options appear in 'color' drop down and the field until a T-shirt theme is selected.
 $($colorMenuOptions).attr('hidden', true);
 $($colorMenu).prepend($colorMenuPlaceholder)
@@ -45,9 +49,10 @@ $($colorMenuPlaceholder).attr('selected', true);
 
 //Only options matching the theme selected via the 'design' menu will be displayed in the 'color' menu.
 //Both menus are updated when a different theme is selected from the 'design' menu.
-$($designMenu).change(function (event) {
+$($designMenu).change(function () {
     $($colorMenuPlaceholder).attr('hidden', true);
     if ($(this).val() === 'js puns') {
+        $color.show();
         $($colorMenuOptions).each(function (i, element) {
             if (i <= 2) {
                 $(element).removeAttr('hidden');
@@ -58,6 +63,7 @@ $($designMenu).change(function (event) {
             }
         });
     } else if ($(this).val() === 'heart js') {
+        $color.show();
         $($colorMenuOptions).each(function (i, element) {
             if (i >= 3) {
                 $(element).removeAttr('hidden');
@@ -80,10 +86,10 @@ $($designMenu).change(function (event) {
 
 /*
 Selection of two workshops of the same day and time cannot be selected.
-If one is selected, another with an overlapping time is not selectable and the user is notified of its unavailability
+If one is selected, another with an overlapping time is not selectable and the user is notified of its unavailability.
 */
 
-//When activity is unchecked, any competing activities become available again
+//When activity is unchecked, any competing activities become available again.
 $($activities).change(function (e) {
     const $checked = e.target;
     const $checkedTime = $($checked).attr('data-day-and-time');
@@ -168,7 +174,6 @@ function emailTest (email) {
     return /^[\w]+\@[\w]+\.[\w]+$/i.test(email);    
 }
 //In "Register for Activities", at least one checkbox must be selected.
-
 function checkboxTest () {
     let result = false;
     $($checkboxes).each(function (i, element){
@@ -191,21 +196,25 @@ function creditCardTest () {
         const ccCvvTest = /^\d{3}$/.test($('#cvv').val());
         if (ccNumTest && ccZipTest && ccCvvTest) {
             result = true;
-
         } else {
         //If form submission is denied, a red text message indicative of the error appears next to the corresponding field(s):
             //Credit Card number 
-            if (!ccNumTest) {
-                const $errorMessage = $('<b>Please enter credit card number</b>').css('color', 'red');
+                //If credit card number is blank, user is prompted to enter a number.
+            if (!ccNumTest && $('#cc-num').val() === '') {
+                const $errorMessage = $('<b>Please enter a credit card number</b>').css('color', 'red');
                 $errorMessage.insertBefore('#cc-num');
+                //If credit card number isn't empty but contains incorrect number of digits, user is prompted to enter between 13 and 16 digits
             } else {
-            //Zip code 
+                const $errorMessage = $('<b>Please enter a number that is between 13 and 16 digits long</b>').css('color', 'red');
+                $errorMessage.insertBefore('#cc-num');
             }
+            //Zip code
             if (!ccZipTest) {
                 const $errorMessage = $('<b>Please enter zip code</b>').css('color', 'red');
                 $errorMessage.insertBefore('#zip');
-            //CVV
-            } if (!ccCvvTest) {
+            }
+            //CVV 
+            if (!ccCvvTest) {
                 const $errorMessage = $('<b>Please enter CVV code (found on back of credit card)</b>').css('color', 'red');
                 $errorMessage.insertBefore('#cvv');
             }
@@ -228,18 +237,32 @@ $('form').submit(function(e) {
         //If form submission is denied, a red text message indicative of the error appears next to the corresponding field(s):
         //Name
         if (!nameResult) {
-            const $errorMessage =  $('<b>Input needed</b>').css('color', 'red');
+            const $errorMessage = $('<b>Input needed</b>').css('color', 'red');
             $errorMessage.insertBefore('#name');
         }
-        //email
-        if(!emailResult) {
-            const $errorMessage =  $('<b>Input needed</b>').css('color', 'red');
-            $errorMessage.insertBefore('#mail');
-        }
+        
         //checkboxes (At least one activity must be selected)
         if(!checkboxResult){
-            const $errorMessage =  $(`<b>Please select at least one activity<br>&nbsp</b>`).css('color', 'red'); 
+            const $errorMessage =  $(`<b>Please select at least one activity<br>&nbsp</b>`).css('color', 'red');
             $errorMessage.insertAfter('.activities legend');
         } 
+        //email
+        if(!emailResult) {
+            const $errorMessage =  $('<b>Email address incorrectly formatted</b>').css('color', 'red');
+            $errorMessage.insertBefore('#mail');
+        }
     } 
+});
+
+/*
+User's entered email address is validated in real time, as it is typed.
+An error message appears as the user types, and disappears once the email address is formatted correctly.
+*/
+$('#mail').on('input', function() {
+    $('b:contains("Email")').remove();   
+    const emailResult = emailTest($('#mail').val());
+    if(!emailResult) {
+        const $errorMessage =  $('<b>Email address incorrectly formatted</b>').css('color', 'red');
+        $errorMessage.insertBefore('#mail');
+    }
 });
